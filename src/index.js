@@ -63,7 +63,8 @@ class AdventureSynth {
 
     const finalGain = context.createGain()
     finalGain.gain.setValueAtTime(0.9, context.currentTime)
-    var compressor = context.createDynamicsCompressor()
+
+    const compressor = context.createDynamicsCompressor()
     compressor.threshold.value = -45
     compressor.knee.value = 40
     compressor.attack.value = 0.15
