@@ -15,5 +15,24 @@
   },
   "standard": {
     "parser": "babel-eslint"
-  }
+  },
+  "name": "adventure-synth",
+  "description": "A web audio synth",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxmechanic/adventure-synth.git"
+  },
+  "keywords": [
+    "webaudio",
+    "music"
+  ],
+  "author": "maxmechanic",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/maxmechanic/adventure-synth/issues"
+  },
+  "homepage": "https://github.com/maxmechanic/adventure-synth#readme"
 }
