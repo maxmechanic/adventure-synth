@@ -47,13 +47,12 @@ const oscSettings = [
 ]
 
 class AdventureSynth {
-  constructor (context, mainFreq = 40) {
+  constructor (context, initialFreq = 40) {
     if (!isAudioContext(context)) {
       throw Error('Must provide AudioContext')
     }
 
     this.context = context
-    this.mainFreq = mainFreq
 
     const notch = buildNotch(context)
     const lowshelf = buildLowshelf(context)
@@ -77,28 +76,32 @@ class AdventureSynth {
     gain.connect(compressor)
     compressor.connect(finalGain)
 
-    this.oscillators = buildOscillators(context, notch, mainFreq)
+    const oscillators = buildOscillators(context, notch, initialFreq)
 
     this.changeFreq = this.changeFreq.bind(this)
 
-    this.nodes = [
-      ...this.oscillators,
+    this.audioNodes = {
+      oscillators,
       notch,
       lowshelf,
       gain,
       finalGain
-    ]
+    }
+  }
+
+  nodes () {
+    return this.audioNodes
   }
 
   connect (node) {
-    const finalNode = this.nodes.slice(-1)[0]
-    finalNode.connect(node)
+    const { finalGain } = this.audioNodes
+    finalGain.connect(node)
 
     return this
   }
 
   start (time) {
-    const { oscillators, context } = this
+    const { audioNodes: { oscillators }, context } = this
     const startTime = time || context.currentTime
 
     oscillators.forEach(
@@ -109,7 +112,7 @@ class AdventureSynth {
   }
 
   stop (time) {
-    const { oscillators, context } = this
+    const { audioNodes: { oscillators }, context } = this
     const stopTime = time || context.currentTime
 
     oscillators.forEach(
@@ -120,7 +123,7 @@ class AdventureSynth {
   }
 
   changeFreq (freq) {
-    const { oscillators, context } = this
+    const { audioNodes: { oscillators }, context } = this
 
     oscillators.forEach(osc =>
       osc.frequency.setValueAtTime(freq, context.currentTime)
@@ -130,10 +133,9 @@ class AdventureSynth {
   }
 
   changeGain (gain) {
-    const { nodes, context } = this
+    const { audioNodes: { finalGain }, context } = this
 
-    const finalNode = nodes.slice(-1)[0]
-    finalNode.gain.setValueAtTime(gain, context.currentTime)
+    finalGain.gain.setValueAtTime(gain, context.currentTime)
 
     return this
   }
